@@ -1,0 +1,156 @@
+<UserControl x:Class="MutiManagerForMe.App.Views.DashboardView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Background="Transparent">
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel Margin="32,28,32,36">
+            <Grid Margin="0,0,0,24">
+                <StackPanel>
+                    <TextBlock Text="{Binding Greeting}" Style="{StaticResource PageTitle}" />
+                    <TextBlock Text="{Binding TodayLabel}" Foreground="{StaticResource TextMutedBrush}" />
+                </StackPanel>
+                <Button Content="↻  Làm mới" Command="{Binding RefreshCommand}" HorizontalAlignment="Right" VerticalAlignment="Center" />
+            </Grid>
+
+            <UniformGrid Columns="3" Margin="0,0,0,20">
+                <Border Style="{StaticResource Card}" Margin="0,0,12,0">
+                    <StackPanel>
+                        <TextBlock Text="Việc hôm nay" Style="{StaticResource MutedText}" />
+                        <TextBlock Text="{Binding TodayTaskCount}" FontSize="29" FontWeight="SemiBold" Margin="0,7,0,2" />
+                        <TextBlock Text="công việc cần xử lý" Style="{StaticResource MutedText}" />
+                    </StackPanel>
+                </Border>
+                <Border Style="{StaticResource Card}" Margin="6,0">
+                    <StackPanel>
+                        <TextBlock Text="Đã hoàn thành" Style="{StaticResource MutedText}" />
+                        <TextBlock Text="{Binding CompletedTodayCount}" FontSize="29" FontWeight="SemiBold" Foreground="{StaticResource SuccessBrush}" Margin="0,7,0,2" />
+                        <TextBlock Text="trong hôm nay" Style="{StaticResource MutedText}" />
+                    </StackPanel>
+                </Border>
+                <Border Style="{StaticResource Card}" Margin="12,0,0,0">
+                    <StackPanel>
+                        <TextBlock Text="Đang quá hạn" Style="{StaticResource MutedText}" />
+                        <TextBlock Text="{Binding OverdueTaskCount}" FontSize="29" FontWeight="SemiBold" Foreground="{StaticResource DangerBrush}" Margin="0,7,0,2" />
+                        <TextBlock Text="cần ưu tiên" Style="{StaticResource MutedText}" />
+                    </StackPanel>
+                </Border>
+            </UniformGrid>
+
+            <Grid Margin="0,0,0,20">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Border Grid.Column="0" Style="{StaticResource Card}" Margin="0,0,8,0">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel>
+                            <TextBlock Text="Thu tháng này" Style="{StaticResource MutedText}" />
+                            <TextBlock Text="{Binding MonthIncome, StringFormat={}{0:N0} ₫}" Foreground="{StaticResource SuccessBrush}" FontWeight="SemiBold" FontSize="19" Margin="0,7,0,0" />
+                        </StackPanel>
+                        <StackPanel Grid.Column="1">
+                            <TextBlock Text="Chi tháng này" Style="{StaticResource MutedText}" />
+                            <TextBlock Text="{Binding MonthExpense, StringFormat={}{0:N0} ₫}" Foreground="{StaticResource DangerBrush}" FontWeight="SemiBold" FontSize="19" Margin="0,7,0,0" />
+                        </StackPanel>
+                    </Grid>
+                </Border>
+                <Border Grid.Column="1" Style="{StaticResource Card}" Margin="8,0,0,0">
+                    <StackPanel>
+                        <Grid>
+                            <TextBlock Text="Ngân sách còn lại" Style="{StaticResource MutedText}" />
+                            <TextBlock Text="{Binding BudgetRemaining, StringFormat={}{0:N0} ₫}" HorizontalAlignment="Right" FontWeight="SemiBold" />
+                        </Grid>
+                        <ProgressBar Value="{Binding BudgetPercent}" Maximum="100" Height="8" Margin="0,12,0,4" Foreground="{StaticResource PrimaryBrush}" Background="{StaticResource SurfaceMutedBrush}" />
+                    </StackPanel>
+                </Border>
+            </Grid>
+
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1.2*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <StackPanel Grid.Column="0" Margin="0,0,8,0">
+                    <Border Style="{StaticResource Card}" Margin="0,0,0,16">
+                        <StackPanel>
+                            <TextBlock Text="Việc cần làm" Style="{StaticResource SectionTitle}" Margin="0,0,0,14" />
+                            <ItemsControl ItemsSource="{Binding TodayTasks}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Border BorderBrush="{StaticResource BorderBrush}" BorderThickness="0,0,0,1" Padding="0,10">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="8" />
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="Auto" />
+                                                </Grid.ColumnDefinitions>
+                                                <Border Width="4" Height="28" CornerRadius="2" Background="{StaticResource PrimaryBrush}" />
+                                                <StackPanel Grid.Column="1" Margin="10,0">
+                                                    <TextBlock Text="{Binding Title}" FontWeight="SemiBold" />
+                                                    <TextBlock Text="{Binding PriorityLabel}" Style="{StaticResource MutedText}" Margin="0,3,0,0" />
+                                                </StackPanel>
+                                                <TextBlock Grid.Column="2" Text="{Binding DueLabel}" Foreground="{StaticResource TextMutedBrush}" VerticalAlignment="Center" />
+                                            </Grid>
+                                        </Border>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                            <TextBlock Text="Chưa có công việc. Hãy tạo ở mục Công việc." Margin="0,12,0,0">
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock" BasedOn="{StaticResource MutedText}">
+                                        <Setter Property="Visibility" Value="Collapsed" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding TodayTasks.Count}" Value="0">
+                                                <Setter Property="Visibility" Value="Visible" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+
+                <StackPanel Grid.Column="1" Margin="8,0,0,0">
+                    <Border Style="{StaticResource Card}" Margin="0,0,0,16">
+                        <StackPanel>
+                            <TextBlock Text="Lịch hôm nay" Style="{StaticResource SectionTitle}" Margin="0,0,0,14" />
+                            <ItemsControl ItemsSource="{Binding TodaySchedule}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Grid Margin="0,7">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="88" />
+                                                <ColumnDefinition Width="*" />
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock Text="{Binding TimeLabel}" Foreground="{StaticResource PrimaryBrush}" FontWeight="SemiBold" />
+                                            <TextBlock Grid.Column="1" Text="{Binding Title}" />
+                                        </Grid>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </StackPanel>
+                    </Border>
+                    <Border Style="{StaticResource Card}">
+                        <StackPanel>
+                            <TextBlock Text="Ghi chú đã ghim" Style="{StaticResource SectionTitle}" Margin="0,0,0,10" />
+                            <ItemsControl ItemsSource="{Binding PinnedNotes}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Margin="0,6">
+                                            <TextBlock Text="{Binding Title}" FontWeight="SemiBold" />
+                                            <TextBlock Text="{Binding Preview}" Style="{StaticResource MutedText}" Margin="0,3,0,0" />
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+            </Grid>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

@@ -1,0 +1,84 @@
+﻿<Window x:Class="MutiManagerForMe.App.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:MutiManagerForMe.App"
+        mc:Ignorable="d"
+        Title="MutiManagerForMe" Height="820" Width="1280"
+        MinHeight="700" MinWidth="1100"
+        Language="vi-VN"
+        WindowStartupLocation="CenterScreen">
+    <Grid Background="{StaticResource CanvasBrush}">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="224" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <Border Grid.Column="0" Background="#151B2D" Padding="18,24">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <StackPanel Margin="8,0,8,28">
+                    <Border Width="38" Height="38" CornerRadius="10" Background="{StaticResource PrimaryBrush}" HorizontalAlignment="Left">
+                        <TextBlock Text="M" Foreground="White" FontSize="19" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
+                    <TextBlock Text="MutiManager" Foreground="White" FontSize="18" FontWeight="SemiBold" Margin="0,12,0,2" />
+                    <TextBlock Text="Quản lý ngày của bạn" Foreground="#8E99B5" FontSize="11" />
+                </StackPanel>
+
+                <ListBox Grid.Row="1"
+                         ItemsSource="{Binding NavigationItems}"
+                         SelectedItem="{Binding SelectedNavigationItem}"
+                         Background="Transparent"
+                         BorderThickness="0">
+                    <ListBox.ItemContainerStyle>
+                        <Style TargetType="ListBoxItem">
+                            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                            <Setter Property="Margin" Value="0,0,0,5" />
+                            <Setter Property="Padding" Value="0" />
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="ListBoxItem">
+                                        <Border x:Name="NavBorder" Padding="12,10" CornerRadius="8" Background="Transparent">
+                                            <ContentPresenter />
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter TargetName="NavBorder" Property="Background" Value="#222A42" />
+                                            </Trigger>
+                                            <Trigger Property="IsSelected" Value="True">
+                                                <Setter TargetName="NavBorder" Property="Background" Value="#303959" />
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </ListBox.ItemContainerStyle>
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="{Binding Glyph}" Foreground="#AEB9D3" FontSize="17" Width="30" VerticalAlignment="Center" />
+                                <TextBlock Text="{Binding Label}" Foreground="White" FontSize="13" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+
+                <Border Grid.Row="2" Background="#20273B" CornerRadius="8" Padding="12">
+                    <StackPanel>
+                        <TextBlock Text="Dữ liệu cục bộ" Foreground="White" FontSize="12" FontWeight="SemiBold" />
+                        <TextBlock Text="Offline • Riêng tư • Nhanh" Foreground="#8E99B5" FontSize="10" Margin="0,3,0,0" />
+                    </StackPanel>
+                </Border>
+            </Grid>
+        </Border>
+
+        <ContentControl Grid.Column="1" Content="{Binding CurrentPage}" />
+    </Grid>
+</Window>
