@@ -23,7 +23,10 @@ public partial class NotesViewModel(DatabaseService database, IUserDialogService
         var selectedId = SelectedNote?.Id;
         var notes = await database.GetNotesAsync();
         Items.Clear();
-        foreach (var note in notes) Items.Add(note);
+        foreach (var note in notes)
+        {
+            Items.Add(note);
+        }
 
         if (selectedId is not null)
         {
@@ -33,7 +36,11 @@ public partial class NotesViewModel(DatabaseService database, IUserDialogService
 
     partial void OnSelectedNoteChanged(NoteEntry? value)
     {
-        if (value is null) return;
+        if (value is null)
+        {
+            return;
+        }
+
         EditorTitle = value.Title;
         EditorContent = value.Content;
         IsPinned = value.IsPinned;
@@ -74,7 +81,11 @@ public partial class NotesViewModel(DatabaseService database, IUserDialogService
     [RelayCommand]
     private async Task DeleteAsync()
     {
-        if (SelectedNote is null || !dialogs.Confirm($"Xóa ghi chú “{SelectedNote.Title}”?")) return;
+        if (SelectedNote is null || !dialogs.Confirm($"Xóa ghi chú “{SelectedNote.Title}”?"))
+        {
+            return;
+        }
+
         await database.DeleteNoteAsync(SelectedNote.Id);
         New();
         await LoadAsync();

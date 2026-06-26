@@ -1,8 +1,11 @@
-using System.Windows.Controls;
+using Microsoft.UI.Xaml.Controls;
 
 namespace MutiManagerForMe.App.Views;
 
-public partial class DashboardView : System.Windows.Controls.UserControl
+public partial class DashboardView : UserControl
 {
-    public DashboardView() => InitializeComponent();
+    public DashboardView()
+    {
+        InitializeComponent();
+    }
 }

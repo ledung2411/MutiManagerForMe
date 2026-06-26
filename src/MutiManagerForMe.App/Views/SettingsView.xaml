@@ -1,9 +1,12 @@
-<UserControl x:Class="MutiManagerForMe.App.Views.SettingsView"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    <StackPanel Margin="32,28,32,32">
-        <TextBlock Text="Cài đặt" Style="{StaticResource PageTitle}" />
-        <TextBlock Text="Quản lý dữ liệu và thông tin ứng dụng." Foreground="{StaticResource TextMutedBrush}" Margin="0,0,0,24" />
+<UserControl
+    x:Class="MutiManagerForMe.App.Views.SettingsView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <StackPanel Margin="32,28,32,32" Spacing="18">
+        <StackPanel>
+            <TextBlock Text="Cài đặt" Style="{StaticResource PageTitle}" />
+            <TextBlock Text="Quản lý dữ liệu và thông tin ứng dụng." Foreground="{StaticResource TextMutedBrush}" />
+        </StackPanel>
 
         <Border Style="{StaticResource Card}" MaxWidth="760" HorizontalAlignment="Left">
             <StackPanel>
@@ -13,21 +16,21 @@
                 <Border Background="{StaticResource SurfaceMutedBrush}" CornerRadius="8" Padding="12" Margin="0,0,0,14">
                     <TextBlock Text="{Binding DatabasePath}" FontFamily="Consolas" FontSize="11" />
                 </Border>
-                <StackPanel Orientation="Horizontal">
-                    <Button Content="Sao lưu dữ liệu" Command="{Binding BackupCommand}" Style="{StaticResource PrimaryButton}" Margin="0,0,10,0" />
+                <StackPanel Orientation="Horizontal" Spacing="10">
+                    <Button Content="Sao lưu dữ liệu" Command="{Binding BackupCommand}" Style="{StaticResource PrimaryButton}" />
                     <Button Content="Mở thư mục dữ liệu" Command="{Binding OpenDataFolderCommand}" />
                 </StackPanel>
                 <TextBlock Text="{Binding StatusMessage}" Foreground="{StaticResource SuccessBrush}" Margin="0,12,0,0" />
             </StackPanel>
         </Border>
 
-        <Border Style="{StaticResource Card}" MaxWidth="760" HorizontalAlignment="Left" Margin="0,18,0,0">
+        <Border Style="{StaticResource Card}" MaxWidth="760" HorizontalAlignment="Left">
             <Grid>
                 <StackPanel>
                     <TextBlock Text="MutiManagerForMe" Style="{StaticResource SectionTitle}" />
-                    <TextBlock Text="Ứng dụng quản lý cá nhân offline cho Windows." Foreground="{StaticResource TextMutedBrush}" Margin="0,5,0,0" />
+                    <TextBlock Text="Ứng dụng quản lý cá nhân offline cho Windows, giao diện WinUI 3." Foreground="{StaticResource TextMutedBrush}" Margin="0,5,0,0" />
                 </StackPanel>
-                <TextBlock Text="{Binding Version, StringFormat=Phiên bản {0}}" HorizontalAlignment="Right" VerticalAlignment="Center" Foreground="{StaticResource TextMutedBrush}" />
+                <TextBlock Text="{Binding Version}" HorizontalAlignment="Right" VerticalAlignment="Center" Foreground="{StaticResource TextMutedBrush}" />
             </Grid>
         </Border>
     </StackPanel>

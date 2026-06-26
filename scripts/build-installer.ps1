@@ -5,7 +5,7 @@ $repoRoot = Split-Path -Parent $PSScriptRoot
 $project = Join-Path $repoRoot 'src\MutiManagerForMe.App\MutiManagerForMe.App.csproj'
 $publishDir = Join-Path $repoRoot 'artifacts\MutiManagerForMe-win-x64'
 $installerScript = Join-Path $repoRoot 'installer\MutiManagerForMe.iss'
-$installerOutput = Join-Path $repoRoot 'artifacts\installer\MutiManagerForMe-Setup-1.0.0-win-x64.exe'
+$installerOutput = Join-Path $repoRoot 'artifacts\installer\MutiManagerForMe-Setup-1.1.0-win-x64.exe'
 
 $isccCommand = Get-Command 'ISCC.exe' -ErrorAction SilentlyContinue
 $iscc = if ($isccCommand) {
@@ -29,9 +29,8 @@ dotnet publish $project `
     -c Release `
     -r win-x64 `
     --self-contained true `
-    -p:PublishSingleFile=true `
-    -p:IncludeNativeLibrariesForSelfExtract=true `
-    -p:EnableCompressionInSingleFile=true `
+    -p:WindowsAppSDKSelfContained=true `
+    -p:PublishSingleFile=false `
     -p:PublishTrimmed=false `
     -p:DebugType=None `
     -p:DebugSymbols=false `

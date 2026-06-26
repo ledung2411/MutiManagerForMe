@@ -1,5 +1,4 @@
-using System.Windows;
-using SaveFileDialog = Microsoft.Win32.SaveFileDialog;
+using Forms = System.Windows.Forms;
 
 namespace MutiManagerForMe.App.Services;
 
@@ -13,14 +12,25 @@ public interface IUserDialogService
 public sealed class UserDialogService : IUserDialogService
 {
     public bool Confirm(string message, string title = "Xác nhận") =>
-        System.Windows.MessageBox.Show(message, title, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes;
+        Forms.MessageBox.Show(
+            message,
+            title,
+            Forms.MessageBoxButtons.YesNo,
+            Forms.MessageBoxIcon.Question) == Forms.DialogResult.Yes;
 
     public void Error(string message, string title = "Không thể thực hiện") =>
-        System.Windows.MessageBox.Show(message, title, MessageBoxButton.OK, MessageBoxImage.Warning);
+        ErrorMessage(message, title);
+
+    public static void ErrorMessage(string message, string title = "Không thể thực hiện") =>
+        Forms.MessageBox.Show(
+            message,
+            title,
+            Forms.MessageBoxButtons.OK,
+            Forms.MessageBoxIcon.Warning);
 
     public string? PickBackupPath()
     {
-        var dialog = new SaveFileDialog
+        using var dialog = new Forms.SaveFileDialog
         {
             Title = "Sao lưu dữ liệu",
             Filter = "MutiManager backup (*.db)|*.db",
@@ -28,6 +38,7 @@ public sealed class UserDialogService : IUserDialogService
             AddExtension = true,
             DefaultExt = ".db"
         };
-        return dialog.ShowDialog() == true ? dialog.FileName : null;
+
+        return dialog.ShowDialog() == Forms.DialogResult.OK ? dialog.FileName : null;
     }
 }

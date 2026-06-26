@@ -22,12 +22,13 @@ MVP hiện có:
 
 ## Công nghệ
 
-- C# và WPF trên .NET 10.
+- C# và WinUI 3 / Windows App SDK trên .NET 10.
 - MVVM với CommunityToolkit.Mvvm.
 - SQLite với Microsoft.Data.Sqlite.
 - xUnit cho kiểm thử tầng dữ liệu.
 
 Các quyết định UI/UX và phạm vi sản phẩm nằm trong [DESIGN.md](DESIGN.md).
+Danh sách update chức năng nằm trong [FEATURE_UPDATES.md](FEATURE_UPDATES.md).
 
 ## Chạy dự án
 
@@ -54,4 +55,4 @@ dotnet test MutiManagerForMe.slnx
 - Lịch tuần/tháng và cảnh báo trùng lịch.
 - Giao dịch định kỳ, chuyển tiền giữa các ví và báo cáo biểu đồ.
 - Khôi phục backup, xuất CSV/Excel và mã hóa dữ liệu cục bộ.
-- Đóng gói MSIX/installer và tùy chọn khởi động cùng Windows.
+- Tùy chọn khởi động cùng Windows.

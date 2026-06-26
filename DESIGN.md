@@ -74,7 +74,7 @@
 - Microcopy rules: Use sentence case, show currency as Vietnamese đồng, use explicit confirmation for destructive actions.
 
 ## Implementation constraints
-- Framework/styling system: C# WPF on the installed .NET desktop runtime, MVVM, SQLite local storage.
+- Framework/styling system: C# WinUI 3 / Windows App SDK on .NET desktop, MVVM, SQLite local storage.
 - Design-token constraints: Colors, typography, spacing primitives, and reusable control styles live in shared resources.
 - Performance constraints: Initial dashboard should appear within two seconds for normal personal datasets; lists should support at least 10,000 persisted records.
 - Compatibility constraints: Windows 10/11 x64, offline use, single-user local profile.

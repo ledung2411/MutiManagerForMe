@@ -1,36 +1,42 @@
-<UserControl x:Class="MutiManagerForMe.App.Views.FinanceView"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+<UserControl
+    x:Class="MutiManagerForMe.App.Views.FinanceView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <ScrollViewer VerticalScrollBarVisibility="Auto">
-        <StackPanel Margin="32,28,32,36">
-            <StackPanel Margin="0,0,0,22">
+        <StackPanel Margin="32,28,32,36" Spacing="18">
+            <StackPanel>
                 <TextBlock Text="Thu chi" Style="{StaticResource PageTitle}" />
                 <TextBlock Text="Theo dõi dòng tiền và ngân sách cá nhân theo tháng." Foreground="{StaticResource TextMutedBrush}" />
             </StackPanel>
 
-            <UniformGrid Columns="3" Margin="0,0,0,18">
-                <Border Style="{StaticResource Card}" Margin="0,0,10,0">
+            <Grid ColumnSpacing="10">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Border Style="{StaticResource Card}">
                     <StackPanel>
                         <TextBlock Text="Tổng số dư" Style="{StaticResource MutedText}" />
-                        <TextBlock Text="{Binding TotalBalance, StringFormat={}{0:N0} ₫}" FontSize="22" FontWeight="SemiBold" Margin="0,8,0,0" />
+                        <TextBlock Text="{Binding TotalBalance}" FontSize="22" FontWeight="SemiBold" Margin="0,8,0,0" />
                     </StackPanel>
                 </Border>
-                <Border Style="{StaticResource Card}" Margin="5,0">
+                <Border Grid.Column="1" Style="{StaticResource Card}">
                     <StackPanel>
                         <TextBlock Text="Thu tháng này" Style="{StaticResource MutedText}" />
-                        <TextBlock Text="{Binding MonthIncome, StringFormat={}{0:N0} ₫}" FontSize="22" FontWeight="SemiBold" Foreground="{StaticResource SuccessBrush}" Margin="0,8,0,0" />
+                        <TextBlock Text="{Binding MonthIncome}" FontSize="22" FontWeight="SemiBold" Foreground="{StaticResource SuccessBrush}" Margin="0,8,0,0" />
                     </StackPanel>
                 </Border>
-                <Border Style="{StaticResource Card}" Margin="10,0,0,0">
+                <Border Grid.Column="2" Style="{StaticResource Card}">
                     <StackPanel>
                         <TextBlock Text="Chi tháng này" Style="{StaticResource MutedText}" />
-                        <TextBlock Text="{Binding MonthExpense, StringFormat={}{0:N0} ₫}" FontSize="22" FontWeight="SemiBold" Foreground="{StaticResource DangerBrush}" Margin="0,8,0,0" />
+                        <TextBlock Text="{Binding MonthExpense}" FontSize="22" FontWeight="SemiBold" Foreground="{StaticResource DangerBrush}" Margin="0,8,0,0" />
                     </StackPanel>
                 </Border>
-            </UniformGrid>
+            </Grid>
 
-            <Border Style="{StaticResource Card}" Margin="0,0,0,18">
-                <Grid>
+            <Border Style="{StaticResource Card}">
+                <Grid ColumnSpacing="20">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="220" />
                         <ColumnDefinition Width="*" />
@@ -40,114 +46,99 @@
                         <TextBlock Text="Ngân sách tháng" Style="{StaticResource SectionTitle}" />
                         <TextBlock Text="{Binding MonthLabel}" Style="{StaticResource MutedText}" Margin="0,4,0,0" />
                     </StackPanel>
-                    <StackPanel Grid.Column="1" Margin="20,2">
+                    <StackPanel Grid.Column="1">
                         <Grid>
                             <TextBlock Text="Đã sử dụng" Style="{StaticResource MutedText}" />
-                            <TextBlock Text="{Binding BudgetRemaining, StringFormat=Còn {0:N0} ₫}" HorizontalAlignment="Right" FontWeight="SemiBold" />
+                            <TextBlock Text="{Binding BudgetRemaining}" HorizontalAlignment="Right" FontWeight="SemiBold" />
                         </Grid>
                         <ProgressBar Value="{Binding BudgetPercent}" Maximum="100" Height="8" Margin="0,10,0,0" Foreground="{StaticResource PrimaryBrush}" />
                     </StackPanel>
-                    <StackPanel Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Right">
-                        <TextBox Text="{Binding BudgetText}" Width="150" ToolTip="Ngân sách tháng" />
-                        <Button Content="Lưu" Command="{Binding SaveBudgetCommand}" Style="{StaticResource PrimaryButton}" Margin="8,0,0,0" />
+                    <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="8" HorizontalAlignment="Right">
+                        <TextBox Text="{Binding BudgetText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="150" PlaceholderText="Ngân sách" />
+                        <Button Content="Lưu" Command="{Binding SaveBudgetCommand}" Style="{StaticResource PrimaryButton}" />
                     </StackPanel>
                 </Grid>
             </Border>
 
-            <Grid>
+            <Grid ColumnSpacing="18">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="350" />
                 </Grid.ColumnDefinitions>
-                <Border Style="{StaticResource Card}" Padding="10" Margin="0,0,18,0" MinHeight="410">
+                <Border Style="{StaticResource Card}" Padding="10" MinHeight="410">
                     <StackPanel>
                         <TextBlock Text="Giao dịch tháng này" Style="{StaticResource SectionTitle}" Margin="8,8,8,12" />
-                        <ListBox ItemsSource="{Binding Transactions}" Background="Transparent" BorderThickness="0">
-                            <ListBox.ItemTemplate>
+                        <ListView ItemsSource="{Binding Transactions}" Background="Transparent" SelectionMode="None">
+                            <ListView.ItemTemplate>
                                 <DataTemplate>
                                     <Border BorderBrush="{StaticResource BorderBrush}" BorderThickness="0,0,0,1" Padding="10,11">
-                                        <Grid>
+                                        <Grid ColumnSpacing="10">
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="44" />
                                                 <ColumnDefinition Width="*" />
                                                 <ColumnDefinition Width="Auto" />
                                             </Grid.ColumnDefinitions>
-                                            <Border Width="36" Height="36" CornerRadius="10" VerticalAlignment="Top">
-                                                <Border.Style>
-                                                    <Style TargetType="Border">
-                                                        <Setter Property="Background" Value="{StaticResource DangerSoftBrush}" />
-                                                        <Style.Triggers>
-                                                            <DataTrigger Binding="{Binding IsExpense}" Value="False"><Setter Property="Background" Value="{StaticResource SuccessSoftBrush}" /></DataTrigger>
-                                                        </Style.Triggers>
-                                                    </Style>
-                                                </Border.Style>
+                                            <Border Width="36" Height="36" CornerRadius="10" VerticalAlignment="Top" Background="{StaticResource PrimarySoftBrush}">
                                                 <TextBlock Text="₫" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold" />
                                             </Border>
-                                            <StackPanel Grid.Column="1" Margin="10,0">
+                                            <StackPanel Grid.Column="1">
                                                 <TextBlock Text="{Binding Category}" FontWeight="SemiBold" />
-                                                <TextBlock Style="{StaticResource MutedText}" Margin="0,4,0,0">
-                                                    <Run Text="{Binding WalletName}" /><Run Text=" • " /><Run Text="{Binding OccurredAt, StringFormat={}{0:dd/MM/yyyy}}" />
-                                                </TextBlock>
+                                                <TextBlock Text="{Binding WalletName}" Style="{StaticResource MutedText}" Margin="0,4,0,0" />
                                                 <TextBlock Text="{Binding Note}" Style="{StaticResource MutedText}" Margin="0,3,0,0" />
                                             </StackPanel>
                                             <StackPanel Grid.Column="2" HorizontalAlignment="Right">
-                                                <TextBlock Text="{Binding SignedAmount, StringFormat={}{0:+#,##0;-#,##0;0} ₫}" FontWeight="SemiBold" HorizontalAlignment="Right">
-                                                    <TextBlock.Style>
-                                                        <Style TargetType="TextBlock">
-                                                            <Setter Property="Foreground" Value="{StaticResource DangerBrush}" />
-                                                            <Style.Triggers>
-                                                                <DataTrigger Binding="{Binding IsExpense}" Value="False"><Setter Property="Foreground" Value="{StaticResource SuccessBrush}" /></DataTrigger>
-                                                            </Style.Triggers>
-                                                        </Style>
-                                                    </TextBlock.Style>
-                                                </TextBlock>
-                                                <Button Content="Xóa" Style="{StaticResource DangerButton}" Margin="0,8,0,0"
-                                                        Command="{Binding DataContext.DeleteTransactionCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                                        CommandParameter="{Binding}" />
+                                                <TextBlock Text="{Binding SignedAmount}" FontWeight="SemiBold" HorizontalAlignment="Right" Foreground="{StaticResource DangerBrush}" />
+                                                <Button Content="Xóa" Style="{StaticResource DangerButton}" Margin="0,8,0,0" Click="DeleteTransaction_Click" />
                                             </StackPanel>
                                         </Grid>
                                     </Border>
                                 </DataTemplate>
-                            </ListBox.ItemTemplate>
-                        </ListBox>
+                            </ListView.ItemTemplate>
+                        </ListView>
                     </StackPanel>
                 </Border>
 
-                <StackPanel Grid.Column="1">
-                    <Border Style="{StaticResource Card}" Margin="0,0,0,16">
-                        <StackPanel>
-                            <TextBlock Text="Thêm giao dịch" Style="{StaticResource SectionTitle}" Margin="0,0,0,16" />
-                            <Grid>
-                                <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
-                                <StackPanel Margin="0,0,6,0">
+                <StackPanel Grid.Column="1" Spacing="16">
+                    <Border Style="{StaticResource Card}">
+                        <StackPanel Spacing="6">
+                            <TextBlock Text="Thêm giao dịch" Style="{StaticResource SectionTitle}" Margin="0,0,0,10" />
+                            <Grid ColumnSpacing="12">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <StackPanel>
                                     <TextBlock Text="Loại" Style="{StaticResource FieldLabel}" />
-                                    <ComboBox ItemsSource="{Binding TransactionTypeOptions}" SelectedItem="{Binding SelectedType}" />
+                                    <ComboBox ItemsSource="{Binding TransactionTypeOptions}" SelectedItem="{Binding SelectedType, Mode=TwoWay}" />
                                 </StackPanel>
-                                <StackPanel Grid.Column="1" Margin="6,0,0,0">
+                                <StackPanel Grid.Column="1">
                                     <TextBlock Text="Số tiền" Style="{StaticResource FieldLabel}" />
-                                    <TextBox Text="{Binding AmountText, UpdateSourceTrigger=PropertyChanged}" />
+                                    <TextBox Text="{Binding AmountText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                                 </StackPanel>
                             </Grid>
-                            <TextBlock Text="Danh mục" Style="{StaticResource FieldLabel}" Margin="0,12,0,6" />
-                            <ComboBox ItemsSource="{Binding CategoryOptions}" SelectedItem="{Binding SelectedCategory}" />
-                            <TextBlock Text="Ví" Style="{StaticResource FieldLabel}" Margin="0,12,0,6" />
-                            <ComboBox ItemsSource="{Binding Wallets}" SelectedItem="{Binding SelectedWallet}" DisplayMemberPath="Name" />
-                            <TextBlock Text="Ngày" Style="{StaticResource FieldLabel}" Margin="0,12,0,6" />
-                            <DatePicker SelectedDate="{Binding TransactionDate}" />
-                            <TextBlock Text="Ghi chú" Style="{StaticResource FieldLabel}" Margin="0,12,0,6" />
-                            <TextBox Text="{Binding TransactionNote}" />
+                            <TextBlock Text="Danh mục" Style="{StaticResource FieldLabel}" Margin="0,8,0,0" />
+                            <ComboBox ItemsSource="{Binding CategoryOptions}" SelectedItem="{Binding SelectedCategory, Mode=TwoWay}" />
+                            <TextBlock Text="Ví" Style="{StaticResource FieldLabel}" Margin="0,8,0,0" />
+                            <ComboBox ItemsSource="{Binding Wallets}" SelectedItem="{Binding SelectedWallet, Mode=TwoWay}" DisplayMemberPath="Name" />
+                            <TextBlock Text="Ngày" Style="{StaticResource FieldLabel}" Margin="0,8,0,0" />
+                            <CalendarDatePicker Date="{Binding TransactionDate, Mode=TwoWay}" />
+                            <TextBlock Text="Ghi chú" Style="{StaticResource FieldLabel}" Margin="0,8,0,0" />
+                            <TextBox Text="{Binding TransactionNote, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                             <TextBlock Text="{Binding ValidationMessage}" Style="{StaticResource ValidationText}" />
-                            <Button Content="Lưu giao dịch" Command="{Binding AddTransactionCommand}" Style="{StaticResource PrimaryButton}" Margin="0,16,0,0" />
+                            <Button Content="Lưu giao dịch" Command="{Binding AddTransactionCommand}" Style="{StaticResource PrimaryButton}" Margin="0,10,0,0" />
                         </StackPanel>
                     </Border>
 
                     <Border Style="{StaticResource Card}">
                         <StackPanel>
                             <TextBlock Text="Thêm ví" FontWeight="SemiBold" Margin="0,0,0,10" />
-                            <Grid>
-                                <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="110" /></Grid.ColumnDefinitions>
-                                <TextBox Text="{Binding NewWalletName}" ToolTip="Tên ví" Margin="0,0,8,0" />
-                                <TextBox Grid.Column="1" Text="{Binding NewWalletBalance}" ToolTip="Số dư đầu" />
+                            <Grid ColumnSpacing="8">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="110" />
+                                </Grid.ColumnDefinitions>
+                                <TextBox Text="{Binding NewWalletName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" PlaceholderText="Tên ví" />
+                                <TextBox Grid.Column="1" Text="{Binding NewWalletBalance, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" PlaceholderText="Số dư đầu" />
                             </Grid>
                             <Button Content="Tạo ví" Command="{Binding AddWalletCommand}" Margin="0,10,0,0" />
                         </StackPanel>

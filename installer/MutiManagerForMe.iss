@@ -1,5 +1,5 @@
 #define MyAppName "MutiManagerForMe"
-#define MyAppVersion "1.0.0"
+#define MyAppVersion "1.1.0"
 #define MyAppPublisher "Le Dung"
 #define MyAppURL "https://github.com/ledung2411/MutiManagerForMe"
 #define MyAppExeName "MutiManagerForMe.exe"

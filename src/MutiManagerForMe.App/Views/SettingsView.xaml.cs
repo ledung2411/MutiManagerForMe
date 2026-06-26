@@ -1,8 +1,11 @@
-using System.Windows.Controls;
+using Microsoft.UI.Xaml.Controls;
 
 namespace MutiManagerForMe.App.Views;
 
-public partial class SettingsView : System.Windows.Controls.UserControl
+public partial class SettingsView : UserControl
 {
-    public SettingsView() => InitializeComponent();
+    public SettingsView()
+    {
+        InitializeComponent();
+    }
 }

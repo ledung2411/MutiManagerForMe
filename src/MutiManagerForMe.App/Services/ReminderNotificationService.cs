@@ -1,7 +1,6 @@
 using MutiManagerForMe.App.Data;
 using System.Drawing;
 using System.Media;
-using System.Windows.Threading;
 using Forms = System.Windows.Forms;
 
 namespace MutiManagerForMe.App.Services;
@@ -11,17 +10,17 @@ public sealed class ReminderNotificationService : IDisposable
     private readonly DatabaseService _database;
     private readonly Action _showWindow;
     private readonly Action _exitApplication;
-    private readonly DispatcherTimer _timer;
+    private readonly Timer _timer;
     private readonly Forms.NotifyIcon _notifyIcon;
-    private bool _checking;
+    private int _checking;
+    private bool _disposed;
 
     public ReminderNotificationService(DatabaseService database, Action showWindow, Action exitApplication)
     {
         _database = database;
         _showWindow = showWindow;
         _exitApplication = exitApplication;
-        _timer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(30) };
-        _timer.Tick += OnTimerTick;
+        _timer = new Timer(OnTimerTick);
 
         var contextMenu = new Forms.ContextMenuStrip();
         contextMenu.Items.Add("Mở MutiManager", null, (_, _) => _showWindow());
@@ -40,8 +39,7 @@ public sealed class ReminderNotificationService : IDisposable
 
     public void Start()
     {
-        _timer.Start();
-        _ = CheckAsync();
+        _timer.Change(TimeSpan.Zero, TimeSpan.FromSeconds(30));
     }
 
     public void ShowRunningInTrayMessage()
@@ -52,12 +50,18 @@ public sealed class ReminderNotificationService : IDisposable
         _notifyIcon.ShowBalloonTip(4500);
     }
 
-    private async void OnTimerTick(object? sender, EventArgs e) => await CheckAsync();
+    private void OnTimerTick(object? state)
+    {
+        _ = CheckAsync();
+    }
 
     private async Task CheckAsync()
     {
-        if (_checking) return;
-        _checking = true;
+        if (Interlocked.Exchange(ref _checking, 1) == 1)
+        {
+            return;
+        }
+
         try
         {
             var alerts = await _database.GetDueRemindersAsync(DateTime.Now);
@@ -76,13 +80,19 @@ public sealed class ReminderNotificationService : IDisposable
         }
         finally
         {
-            _checking = false;
+            Interlocked.Exchange(ref _checking, 0);
         }
     }
 
     public void Dispose()
     {
-        _timer.Stop();
+        if (_disposed)
+        {
+            return;
+        }
+
+        _disposed = true;
+        _timer.Dispose();
         _notifyIcon.Visible = false;
         _notifyIcon.Dispose();
     }

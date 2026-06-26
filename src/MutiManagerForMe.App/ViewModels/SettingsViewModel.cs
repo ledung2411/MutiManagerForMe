@@ -11,7 +11,7 @@ public partial class SettingsViewModel(DatabaseService database, IUserDialogServ
 {
     public override string Title => "Cài đặt";
     public string DatabasePath => database.DatabasePath;
-    public string Version => typeof(SettingsViewModel).Assembly.GetName().Version?.ToString(3) ?? "1.0.0";
+    public string Version => typeof(SettingsViewModel).Assembly.GetName().Version?.ToString(3) ?? "1.1.0";
 
     [ObservableProperty] private string statusMessage = string.Empty;
 
@@ -19,7 +19,11 @@ public partial class SettingsViewModel(DatabaseService database, IUserDialogServ
     private async Task BackupAsync()
     {
         var target = dialogs.PickBackupPath();
-        if (string.IsNullOrWhiteSpace(target)) return;
+        if (string.IsNullOrWhiteSpace(target))
+        {
+            return;
+        }
+
         try
         {
             await database.CreateBackupAsync(target);
@@ -35,7 +39,11 @@ public partial class SettingsViewModel(DatabaseService database, IUserDialogServ
     private void OpenDataFolder()
     {
         var folder = Path.GetDirectoryName(DatabasePath);
-        if (folder is null) return;
+        if (folder is null)
+        {
+            return;
+        }
+
         Process.Start(new ProcessStartInfo("explorer.exe", folder) { UseShellExecute = true });
     }
 }

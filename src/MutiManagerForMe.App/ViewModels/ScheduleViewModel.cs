@@ -13,7 +13,7 @@ public partial class ScheduleViewModel(DatabaseService database, IUserDialogServ
     public override string Title => "Lịch trình";
     public ObservableCollection<ScheduleEntry> Items { get; } = [];
 
-    [ObservableProperty] private DateTime selectedDate = DateTime.Today;
+    [ObservableProperty] private DateTimeOffset selectedDate = DateTimeOffset.Now;
     [ObservableProperty] private string newTitle = string.Empty;
     [ObservableProperty] private string newDescription = string.Empty;
     [ObservableProperty] private string startTime = "09:00";
@@ -22,17 +22,21 @@ public partial class ScheduleViewModel(DatabaseService database, IUserDialogServ
     [ObservableProperty] private int reminderMinutes = 15;
     [ObservableProperty] private string validationMessage = string.Empty;
 
-    public string SelectedDateLabel => SelectedDate.ToString("dddd, dd/MM/yyyy", new CultureInfo("vi-VN"));
+    public string SelectedDateLabel => SelectedDate.DateTime.ToString("dddd, dd/MM/yyyy", new CultureInfo("vi-VN"));
 
     public override async Task LoadAsync()
     {
-        var entries = await database.GetScheduleAsync(SelectedDate.Date, SelectedDate.Date.AddDays(1));
+        var day = SelectedDate.DateTime.Date;
+        var entries = await database.GetScheduleAsync(day, day.AddDays(1));
         Items.Clear();
-        foreach (var entry in entries) Items.Add(entry);
+        foreach (var entry in entries)
+        {
+            Items.Add(entry);
+        }
         OnPropertyChanged(nameof(SelectedDateLabel));
     }
 
-    partial void OnSelectedDateChanged(DateTime value) => _ = LoadAsync();
+    partial void OnSelectedDateChanged(DateTimeOffset value) => _ = LoadAsync();
 
     [RelayCommand]
     private async Task AddAsync()
@@ -50,8 +54,9 @@ public partial class ScheduleViewModel(DatabaseService database, IUserDialogServ
             return;
         }
 
-        var startsAt = SelectedDate.Date.Add(start);
-        var endsAt = SelectedDate.Date.Add(end);
+        var day = SelectedDate.DateTime.Date;
+        var startsAt = day.Add(start);
+        var endsAt = day.Add(end);
         if (endsAt <= startsAt)
         {
             ValidationMessage = "Giờ kết thúc phải sau giờ bắt đầu.";
@@ -75,7 +80,11 @@ public partial class ScheduleViewModel(DatabaseService database, IUserDialogServ
     [RelayCommand]
     private async Task DeleteAsync(ScheduleEntry? item)
     {
-        if (item is null || !dialogs.Confirm($"Xóa lịch “{item.Title}”?")) return;
+        if (item is null || !dialogs.Confirm($"Xóa lịch “{item.Title}”?"))
+        {
+            return;
+        }
+
         await database.DeleteScheduleEntryAsync(item.Id);
         await LoadAsync();
     }
@@ -87,7 +96,7 @@ public partial class ScheduleViewModel(DatabaseService database, IUserDialogServ
     private void NextDay() => SelectedDate = SelectedDate.AddDays(1);
 
     [RelayCommand]
-    private void Today() => SelectedDate = DateTime.Today;
+    private void Today() => SelectedDate = DateTimeOffset.Now;
 
     private static bool TryTime(string text, out TimeSpan value) =>
         TimeSpan.TryParseExact(text.Trim(), ["h\\:mm", "hh\\:mm"], CultureInfo.InvariantCulture, out value);

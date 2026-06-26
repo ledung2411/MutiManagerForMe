@@ -19,8 +19,8 @@ public partial class TasksViewModel(DatabaseService database, IUserDialogService
 
     [ObservableProperty] private string newTitle = string.Empty;
     [ObservableProperty] private string newDescription = string.Empty;
-    [ObservableProperty] private DateTime? dueDate = DateTime.Today;
-    [ObservableProperty] private DateTime? reminderDate;
+    [ObservableProperty] private DateTimeOffset? dueDate = DateTimeOffset.Now;
+    [ObservableProperty] private DateTimeOffset? reminderDate;
     [ObservableProperty] private string reminderTime = "09:00";
     [ObservableProperty] private PriorityChoice? selectedPriority;
     [ObservableProperty] private string selectedRepeat = RepeatRules.None;
@@ -58,14 +58,14 @@ public partial class TasksViewModel(DatabaseService database, IUserDialogService
                 ValidationMessage = "Giờ nhắc cần có dạng HH:mm.";
                 return;
             }
-            reminder = ReminderDate.Value.Date.Add(time);
+            reminder = ReminderDate.Value.DateTime.Date.Add(time);
         }
 
         await database.AddTaskAsync(new TaskItem
         {
             Title = NewTitle,
             Description = NewDescription,
-            DueAt = DueDate?.Date.AddHours(23).AddMinutes(59),
+            DueAt = DueDate?.DateTime.Date.AddHours(23).AddMinutes(59),
             ReminderAt = reminder,
             Priority = SelectedPriority?.Value ?? 2,
             RepeatRule = SelectedRepeat
@@ -80,7 +80,11 @@ public partial class TasksViewModel(DatabaseService database, IUserDialogService
     [RelayCommand]
     private async Task ToggleCompletedAsync(TaskItem? item)
     {
-        if (item is null) return;
+        if (item is null)
+        {
+            return;
+        }
+
         var completed = !item.IsCompleted;
         await database.SetTaskCompletedAsync(item.Id, completed);
 
@@ -105,7 +109,11 @@ public partial class TasksViewModel(DatabaseService database, IUserDialogService
     [RelayCommand]
     private async Task DeleteAsync(TaskItem? item)
     {
-        if (item is null || !dialogs.Confirm($"Xóa công việc “{item.Title}”?")) return;
+        if (item is null || !dialogs.Confirm($"Xóa công việc “{item.Title}”?"))
+        {
+            return;
+        }
+
         await database.DeleteTaskAsync(item.Id);
         await LoadAsync();
     }

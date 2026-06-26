@@ -1,22 +1,32 @@
 using System.Globalization;
-using System.Windows;
+using System.Runtime.InteropServices;
+using Microsoft.UI.Xaml;
 using MutiManagerForMe.App.Data;
 using MutiManagerForMe.App.Services;
 using MutiManagerForMe.App.ViewModels;
+using Windows.Graphics;
+using WinRT.Interop;
 
 namespace MutiManagerForMe.App;
 
-public partial class App : System.Windows.Application
+public partial class App : Application
 {
+    private const int SwHide = 0;
+    private const int SwShow = 5;
+
     private ReminderNotificationService? _reminderService;
     private MainWindow? _mainWindow;
+    private IntPtr _mainWindowHandle;
     private bool _isExiting;
     private bool _trayMessageShown;
 
-    protected override async void OnStartup(StartupEventArgs e)
+    public App()
     {
-        base.OnStartup(e);
-        ShutdownMode = ShutdownMode.OnExplicitShutdown;
+        InitializeComponent();
+    }
+
+    protected override async void OnLaunched(LaunchActivatedEventArgs args)
+    {
         CultureInfo.DefaultThreadCurrentCulture = new CultureInfo("vi-VN");
         CultureInfo.DefaultThreadCurrentUICulture = new CultureInfo("vi-VN");
 
@@ -24,34 +34,36 @@ public partial class App : System.Windows.Application
         {
             var database = new DatabaseService();
             await database.InitializeAsync();
-            var dialogs = new UserDialogService();
 
-            _mainWindow = new MainWindow
-            {
-                DataContext = new MainViewModel(database, dialogs)
-            };
-            _mainWindow.Closing += OnMainWindowClosing;
+            var dialogs = new UserDialogService();
+            _mainWindow = new MainWindow();
+            _mainWindow.SetViewModel(new MainViewModel(database, dialogs));
+            _mainWindow.AppWindow.Resize(new SizeInt32(1280, 820));
+            _mainWindow.AppWindow.Closing += OnMainWindowClosing;
+            _mainWindowHandle = WindowNative.GetWindowHandle(_mainWindow);
 
             _reminderService = new ReminderNotificationService(database, ShowMainWindow, ExitApplication);
             _reminderService.Start();
-            _mainWindow.Show();
+            _mainWindow.Activate();
         }
         catch (Exception ex)
         {
-            System.Windows.MessageBox.Show(
+            UserDialogService.ErrorMessage(
                 $"Không thể khởi động MutiManagerForMe.\n\n{ex.Message}",
-                "Lỗi khởi động",
-                MessageBoxButton.OK,
-                MessageBoxImage.Error);
-            Shutdown(1);
+                "Lỗi khởi động");
+            Exit();
         }
     }
 
-    private void OnMainWindowClosing(object? sender, System.ComponentModel.CancelEventArgs e)
+    private void OnMainWindowClosing(Microsoft.UI.Windowing.AppWindow sender, Microsoft.UI.Windowing.AppWindowClosingEventArgs args)
     {
-        if (_isExiting) return;
-        e.Cancel = true;
-        _mainWindow?.Hide();
+        if (_isExiting)
+        {
+            return;
+        }
+
+        args.Cancel = true;
+        HideMainWindow();
         if (!_trayMessageShown)
         {
             _trayMessageShown = true;
@@ -61,13 +73,26 @@ public partial class App : System.Windows.Application
 
     private void ShowMainWindow()
     {
-        if (_mainWindow is null) return;
-        _mainWindow.Show();
-        if (_mainWindow.WindowState == WindowState.Minimized)
+        if (_mainWindow is null)
         {
-            _mainWindow.WindowState = WindowState.Normal;
+            return;
         }
+
+        if (_mainWindowHandle != IntPtr.Zero)
+        {
+            ShowWindow(_mainWindowHandle, SwShow);
+            SetForegroundWindow(_mainWindowHandle);
+        }
+
         _mainWindow.Activate();
+    }
+
+    private void HideMainWindow()
+    {
+        if (_mainWindowHandle != IntPtr.Zero)
+        {
+            ShowWindow(_mainWindowHandle, SwHide);
+        }
     }
 
     private void ExitApplication()
@@ -75,12 +100,12 @@ public partial class App : System.Windows.Application
         _isExiting = true;
         _reminderService?.Dispose();
         _mainWindow?.Close();
-        Shutdown();
+        Exit();
     }
 
-    protected override void OnExit(ExitEventArgs e)
-    {
-        _reminderService?.Dispose();
-        base.OnExit(e);
-    }
+    [DllImport("user32.dll")]
+    private static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
+
+    [DllImport("user32.dll")]
+    private static extern bool SetForegroundWindow(IntPtr hWnd);
 }

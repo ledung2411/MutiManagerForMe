@@ -21,7 +21,7 @@ public partial class FinanceViewModel(DatabaseService database, IUserDialogServi
     [ObservableProperty] private IReadOnlyList<string> categoryOptions = FinanceCategories.Expense;
     [ObservableProperty] private string amountText = string.Empty;
     [ObservableProperty] private string transactionNote = string.Empty;
-    [ObservableProperty] private DateTime transactionDate = DateTime.Today;
+    [ObservableProperty] private DateTimeOffset transactionDate = DateTimeOffset.Now;
     [ObservableProperty] private decimal monthIncome;
     [ObservableProperty] private decimal monthExpense;
     [ObservableProperty] private decimal totalBalance;
@@ -46,11 +46,17 @@ public partial class FinanceViewModel(DatabaseService database, IUserDialogServi
         var budget = await database.GetBudgetAsync(today.ToString("yyyy-MM"));
 
         Wallets.Clear();
-        foreach (var wallet in wallets) Wallets.Add(wallet);
+        foreach (var wallet in wallets)
+        {
+            Wallets.Add(wallet);
+        }
         SelectedWallet = Wallets.FirstOrDefault(w => w.Id == selectedWalletId) ?? Wallets.FirstOrDefault();
 
         Transactions.Clear();
-        foreach (var item in transactions) Transactions.Add(item);
+        foreach (var item in transactions)
+        {
+            Transactions.Add(item);
+        }
 
         MonthIncome = transactions.Where(t => !t.IsExpense).Sum(t => t.Amount);
         MonthExpense = transactions.Where(t => t.IsExpense).Sum(t => t.Amount);
@@ -89,7 +95,7 @@ public partial class FinanceViewModel(DatabaseService database, IUserDialogServi
             Amount = amount,
             Category = SelectedCategory,
             Note = TransactionNote,
-            OccurredAt = TransactionDate.Date.Add(DateTime.Now.TimeOfDay)
+            OccurredAt = TransactionDate.DateTime.Date.Add(DateTime.Now.TimeOfDay)
         });
         AmountText = string.Empty;
         TransactionNote = string.Empty;
@@ -99,7 +105,11 @@ public partial class FinanceViewModel(DatabaseService database, IUserDialogServi
     [RelayCommand]
     private async Task DeleteTransactionAsync(FinanceTransaction? item)
     {
-        if (item is null || !dialogs.Confirm($"Xóa giao dịch {item.Amount:N0} ₫?")) return;
+        if (item is null || !dialogs.Confirm($"Xóa giao dịch {item.Amount:N0} ₫?"))
+        {
+            return;
+        }
+
         await database.DeleteTransactionAsync(item.Id);
         await LoadAsync();
     }

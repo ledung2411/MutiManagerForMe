@@ -7,8 +7,11 @@ namespace MutiManagerForMe.App.ViewModels;
 
 public partial class MainViewModel : ObservableObject
 {
+    private readonly IUserDialogService _dialogs;
+
     public MainViewModel(DatabaseService database, IUserDialogService dialogs)
     {
+        _dialogs = dialogs;
         NavigationItems =
         [
             new("Tổng quan", "⌂", new DashboardViewModel(database)),
@@ -28,12 +31,16 @@ public partial class MainViewModel : ObservableObject
 
     partial void OnSelectedNavigationItemChanged(NavigationItem? value)
     {
-        if (value is null) return;
+        if (value is null)
+        {
+            return;
+        }
+
         CurrentPage = value.Page;
         _ = LoadPageSafeAsync(value.Page);
     }
 
-    private static async Task LoadPageSafeAsync(PageViewModel page)
+    private async Task LoadPageSafeAsync(PageViewModel page)
     {
         try
         {
@@ -41,11 +48,7 @@ public partial class MainViewModel : ObservableObject
         }
         catch (Exception ex)
         {
-            System.Windows.MessageBox.Show(
-                $"Không thể tải dữ liệu.\n{ex.Message}",
-                "MutiManagerForMe",
-                System.Windows.MessageBoxButton.OK,
-                System.Windows.MessageBoxImage.Warning);
+            _dialogs.Error($"Không thể tải dữ liệu.\n{ex.Message}", "MutiManagerForMe");
         }
     }
 }

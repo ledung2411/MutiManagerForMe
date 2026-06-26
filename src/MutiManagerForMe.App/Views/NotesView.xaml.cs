@@ -1,8 +1,11 @@
-using System.Windows.Controls;
+using Microsoft.UI.Xaml.Controls;
 
 namespace MutiManagerForMe.App.Views;
 
-public partial class NotesView : System.Windows.Controls.UserControl
+public partial class NotesView : UserControl
 {
-    public NotesView() => InitializeComponent();
+    public NotesView()
+    {
+        InitializeComponent();
+    }
 }
